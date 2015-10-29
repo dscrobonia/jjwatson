@@ -10,6 +10,26 @@ def
 
 
 
+def greedy(capacity, size, items):
+   weight = 0
+   value = 0
+   indices = []
+   temp = null
+
+   # sort items TODO: don't know how
+
+   while (weight + items[0].weight < capacity):
+      temp = items.pop(0)
+      weight += temp.weight
+      value += temp.value
+      indices.append(temp.index)
+
+   # sort indeces, dont know how
+
+   print 'greedy solution is: ' + str(value) + ' ' + str(weight)
+
+   print ' '.join(indeces)
+
 
 
 def branch(capacity, size, items, ratios):
