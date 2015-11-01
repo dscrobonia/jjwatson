@@ -130,7 +130,7 @@ public class KnapsackComp {
          return;
       }
 
-      Scanner scanner
+      Scanner scanner;
       try {
          scanner = new Scanner(new File(args[0]));
       } catch (Exception FileNotFoundException) {
@@ -314,6 +314,7 @@ public class KnapsackComp {
 
       while (!q.isEmpty()) {
          temp = q.poll();
+         System.out.println(max.value);
 
          if (temp.bound > max.value && temp.length < size) {
             Node left = temp.makeLeft(items, capacity, ratios);
