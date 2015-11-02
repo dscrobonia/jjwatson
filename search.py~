@@ -75,58 +75,59 @@ class Node:
    def __lt__(self, other):
       return self.bound < other.bound
 
-def greedy(capacity, size, items):
-   weight = 0
-   value = 0
-   indices = []
+class Search:
+   def greedy(capacity, size, items):
+      weight = 0
+      value = 0
+      indices = []
 
-   items.sort(reverse=True)
+      items.sort(reverse=True)
 
-   while (weight + items[0].weight < capacity):
-      temp = items.pop(0)
-      weight += temp.weight
-      value += temp.value
-      indices.append(temp.index)
+      while (weight + items[0].weight < capacity):
+         temp = items.pop(0)
+         weight += temp.weight
+         value += temp.value
+         indices.append(temp.index)
 
-   indices.sort()
+      indices.sort()
 
-   print 'greedy solution is: ' + str(value) + ' ' + str(weight)
+      print 'greedy solution is: ' + str(value) + ' ' + str(weight)
 
-   print ' '.join(str(indices))
+      print ' '.join(str(indices))
 
 
 
-def branch(capacity, size, items, ratios):
-   q = PriorityQueue()
-   temp = Node(0, 0, ratios[0].ratio * capacity, 0, '')
-   maxV = temp
+   def branch(capacity, size, items, ratios):
+      q = PriorityQueue()
+      temp = Node(0, 0, ratios[0].ratio * capacity, 0, '')
+      maxV = temp
 
-   q.put(temp)
+      q.put(temp)
 
-   while(not q.empty()):
-      temp = q.get()
-      print maxV.value
+      while(not q.empty()):
+         temp = q.get()
+         print maxV.value
 
-      if (temp.bound > maxV.value and temp.length < size):
-         left = temp.make_left(items, capacity, ratios)
+         if (temp.bound > maxV.value and temp.length < size):
+            left = temp.make_left(items, capacity, ratios)
 
-         if (left.bound > maxV.value):
-            q.put(left)
+            if (left.bound > maxV.value):
+               q.put(left)
 
-         if (temp.weight + int(items[temp.length][Node.WEIGHT]) <= capacity):
-            right = temp.make_right(items, capacity, ratios)
-            if (right.value > maxV.value):
-               maxV = right
+            if (temp.weight + int(items[temp.length][Node.WEIGHT]) <= capacity):
+               right = temp.make_right(items, capacity, ratios)
+               if (right.value > maxV.value):
+                  maxV = right
 
-            if (right.bound > maxV.value):
-               q.put(right)
+               if (right.bound > maxV.value):
+                  q.put(right)
 
-   print 'Using Branch and Bound the best feasible solution found (that David wrote, its probably soso): '
-   
-   print str(maxV.value) + ' ' + str(maxV.weight)
-   for i in range(maxV.bitString):
-      if (maxV.bitString[i] == '1'):
-         print items[i]
+      print 'Using Branch and Bound the best feasible solution found (that David wrote, its probably soso): '
+      
+      print str(maxV.value) + ' ' + str(maxV.weight)
+      for i in range(maxV.bitString):
+         if (maxV.bitString[i] == '1'):
+            print items[i]
 
 if __name__ == '__main__':
    capacity = 0

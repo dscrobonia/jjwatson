@@ -16,8 +16,7 @@ def read_players():
 
    return players
 
-
-if __name__ == '__main__':
+def get_lineups():
    #list of players (player, position, price, points)
    lineupStructure = {'QB': 1, 'RB': 2, 'WR': 3, 'TE': 1, 'K': 1, 'DEF': 1}
    players = read_players()
@@ -25,5 +24,7 @@ if __name__ == '__main__':
 
    optimalLineups = search(lineupStructure, players, numLineups)
 
-   print optimalLineups
+   return optimalLineups
 
+if __name__ == '__main__':
+   print get_lineups()
