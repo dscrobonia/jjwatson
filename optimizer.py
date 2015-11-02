@@ -1,8 +1,8 @@
 import csv 
-import Search
+import search
 
 def search(players, structure, numLineups):
-   optimalLineups = Search.greedy(players, structure, numLineups)
+   optimalLineups = search.greedy(players, structure, numLineups)
 
    return optimalLineups
 
