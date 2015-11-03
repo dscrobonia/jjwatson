@@ -4,6 +4,7 @@ from search import Player
 
 def optimize(players, structure, salaryCap, numLineups):
    optimalLineups = search.greedy(players, structure, salaryCap, numLineups)
+   #optimalLineups = search.branch(players, structure, salaryCap, numLineups)
 
    return optimalLineups
 

@@ -77,6 +77,12 @@ class Node:
 
       return right
 
+   def isLineupFilled(self):
+      for position in self.remStructure:
+         if self.remStructure[position] > 0:
+            return True
+      return False
+
 
 class BadNode:
    INDEX = 0
@@ -171,16 +177,46 @@ def greedy(players, structure, capacity, numberReturned):
 
    return optimalLineups
 
-def branch(players, highestPlayers, lineupStructure, capacity):
-   q = Queue()
+def branch(players, lineupStructure, capacity, numLineups):
+   stack = []
+   
+   bound = 0
 
-   temp = Node()
+   for position in lineupStructure:
+      bound = bound + (lineupStructure[position] * highestPlayers[position])
+   print "maxBound:", bound
+   
+  # highestPlayers = {new}
+  # for player in players:
+      
+
+   temp = Node(0, 0, 0, [], lineupStructure, bound)
    best = temp
 
-   q.put(temp)
+   stack.append(temp)
 
-   while not q.empty():
-      temp = q.pop()
+   while not stack.empty():
+      temp = stack.pop()
+      print best.value
+      
+      if temp.bound > best.value and not temp.lineupFilled():
+         left = temp.make_left(players)
+
+         if left.bound > best.value:
+            stack.append(left)
+
+         if temp.cost + players[temp.curIndex].weight <= capacity:
+            right = temp.make_right(players, highestPlayers)
+
+            if right.value > best.value:
+               best = right
+
+            if right.bound > best.value:
+               stack.append()
+
+   print 'b&b complete'
+
+   return [best.lineup]
    
 def badbranch(capacity, size, items, ratios):
    q = PriorityQueue()
