@@ -3,15 +3,15 @@ from Queue import PriorityQueue
 
 class Player:
    
-   def __init__(self, name, position, value, weight):
-      self.name = name
-      self.position = position
-      self.value = value
-      self.weight = weight
-      if weight != 0:
-          self.ratio = value/weight
-      else:
-          self.ratio = 0
+   #def __init__(self, name, position, value, weight):
+   #   self.name = name
+   #   self.position = position
+   #   self.value = value
+   #   self.weight = weight
+   #   if weight != 0:
+   #       self.ratio = value/weight
+   #   else:
+   #       self.ratio = 0
 
    def __init__(self, args):
       self.name = str(args[0])
@@ -53,7 +53,7 @@ class Node:
 #      availPlayers.sort()
       left.curIndex = left.curIndex + 1
 
-      while structure[players[left.curIndex].position] == 0:
+      while left.remStructure[players[left.curIndex].position] == 0:
          left.curIndex = left.curIndex + 1
 
       return left
@@ -64,7 +64,7 @@ class Node:
       player = players[right.curIndex]
 
       right.value = right.value + player.value
-      right.cost = right.value + player.cost
+      right.cost = right.cost + player.weight
       right.curLineup.append(player)
       right.remStructure[player.position] = right.remStructure[player.position] - 1
       right.bound = right.value
@@ -72,16 +72,16 @@ class Node:
       for position in right.remStructure:
          right.bound = right.bound + right.remStructure[position] * highestPlayers[position].value
 
-      while right.remStructure[players[right.curIndex].position] == 0:
+      while right.curIndex < len(players) and right.remStructure[players[right.curIndex].position] == 0:
          right.curIndex = right.curIndex + 1
 
       return right
 
-   def isLineupFilled(self):
+   def is_lineup_filled(self):
       for position in self.remStructure:
          if self.remStructure[position] > 0:
-            return True
-      return False
+            return False
+      return True
 
 
 class BadNode:
@@ -146,10 +146,11 @@ def greedy(players, structure, capacity, numberReturned):
    value = 0
    optimalLineups = []
    optimalLineup = []
+   remPositions = 9
 
    players.sort(reverse=True)
 
-   while (structure['total'] > 0):
+   while (remPositions > 0):
       temp = players.pop(0)
 
       if weight + temp.weight < capacity:
@@ -160,7 +161,8 @@ def greedy(players, structure, capacity, numberReturned):
          #decrement players at position in lineup and total players
          #and then remove if position is filled
          structure[temp.position] = structure[temp.position] - 1
-         structure['total'] = structure['total'] - 1;
+         #structure['total'] = structure['total'] - 1;
+         remPositions = remPositions - 1
 
          if structure[temp.position] <= 0:
             #removes players from that position
@@ -179,30 +181,41 @@ def greedy(players, structure, capacity, numberReturned):
 
 def branch(players, lineupStructure, capacity, numLineups):
    stack = []
-   
+
+   highestPlayers = {'QB': Player(['', 'QB', 0, 0]),
+                     'RB': Player(['', 'RB', 0, 0]),
+                     'WR': Player(['', 'WR', 0, 0]),
+                     'TE': Player(['', 'TE', 0, 0]),
+                     'K': Player(['', 'K', 0, 0]), 
+                     'D': Player(['', 'D', 0, 0])}
+   for player in players:
+      if player.value > highestPlayers[player.position].value:
+         highestPlayers[player.position] = player
+
+  # print "highest scoring"
+  # for player in highestPlayers:
+  #    print highestPlayers[player].name, highestPlayers[player].value
+
    bound = 0
 
    for position in lineupStructure:
-      bound = bound + (lineupStructure[position] * highestPlayers[position])
-   print "maxBound:", bound
-   
-  # highestPlayers = {new}
-  # for player in players:
-      
+      bound = bound + (lineupStructure[position] * highestPlayers[position].value)
+  # print "maxBound:", bound
 
    temp = Node(0, 0, 0, [], lineupStructure, bound)
    best = temp
 
    stack.append(temp)
 
-   while not stack.empty():
+   while stack:
       temp = stack.pop()
-      print best.value
+   #   print best.value
       
-      if temp.bound > best.value and not temp.lineupFilled():
+      if temp.bound > best.value and not temp.is_lineup_filled():
          left = temp.make_left(players)
 
          if left.bound > best.value:
+            #print "appending left"
             stack.append(left)
 
          if temp.cost + players[temp.curIndex].weight <= capacity:
@@ -212,11 +225,14 @@ def branch(players, lineupStructure, capacity, numLineups):
                best = right
 
             if right.bound > best.value:
-               stack.append()
+               #print "appending right"
+               stack.append(right)
 
-   print 'b&b complete'
+  # print 'b&b complete'
+  # for player in best.curLineup:
+  #    print player.name, player.value
 
-   return [best.lineup]
+   return [best.curLineup]
    
 def badbranch(capacity, size, items, ratios):
    q = PriorityQueue()

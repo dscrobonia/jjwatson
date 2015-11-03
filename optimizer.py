@@ -3,8 +3,8 @@ import search
 from search import Player
 
 def optimize(players, structure, salaryCap, numLineups):
-   optimalLineups = search.greedy(players, structure, salaryCap, numLineups)
-   #optimalLineups = search.branch(players, structure, salaryCap, numLineups)
+   #optimalLineups = search.greedy(players, structure, salaryCap, numLineups)
+   optimalLineups = search.branch(players, structure, salaryCap, numLineups)
 
    return optimalLineups
 
@@ -20,7 +20,7 @@ def read_players():
 
 def get_lineups():
    #list of players (player, position, price, points)
-   lineupStructure = {'total': 9, 'QB': 1, 'RB': 2, 'WR': 3, 'TE': 1, 'K': 1, 'D': 1}
+   lineupStructure = {'QB': 1, 'RB': 2, 'WR': 3, 'TE': 1, 'K': 1, 'D': 1}
    players = read_players()
    numLineups = 10
 
@@ -36,4 +36,14 @@ def get_lineups():
    return optimalLineups
 
 if __name__ == '__main__':
-   print get_lineups()
+   lineups = get_lineups()
+
+   for lineup in lineups:
+      total = 0
+      cost = 0
+      for player in lineup:
+         total = total + player.value
+         cost = cost + player.weight
+         print player.name, player.value
+
+      print 'total:', total, 'cost:', cost
