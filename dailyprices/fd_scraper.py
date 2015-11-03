@@ -6,8 +6,8 @@ FD_PRICES_HIST_FILE = "fd_prices_hist_wk{0}.csv"
 CURRENT_WEEK_URL = 'http://rotoguru1.com/cgi-bin/fstats.cgi?pos=0&sort=4&game=f&colA=0&daypt=0&xavg=0&inact=0&maxprc=99999&outcsv=1'
 HISTORICAL_WEEK_URL = 'http://rotoguru1.com/cgi-bin/fyday.pl?week={0}&game=fd&scsv=1'
 
-getCurrentWeek = False
-getHistoricalWeek = True
+getCurrentWeek = True
+getHistoricalWeek = not getCurrentWeek
 
 if (getCurrentWeek):
    #get html for CURRENT_WEEK_URL
