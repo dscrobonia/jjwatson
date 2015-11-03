@@ -1,22 +1,28 @@
 import sys
 from Queue import PriorityQueue
 
-class Item:
+class Player:
    
-   def __init__(self, index, value, weight):
-      self.index = index
+   def __init__(self, name, position, value, weight):
+      self.name = name
+      self.position = position
       self.value = value
       self.weight = weight
       self.ratio = value/weight
 
    def __init__(self, args):
-      self.index = int(args[0])
-      self.value = int(args[1])
-      self.weight = int(args[2])
-      self.ratio = float(self.value)/float(self.weight)
+      self.name = str(args[0])
+      self.position = str(args[1])
+      self.value = float(args[2])
+      self.weight = int(args[3])
+      self.ratio = self.value/float(self.weight)
 
    def __lt__(self, other):
       return self.ratio < other.ratio
+
+   def __iter__(self):
+      for attr, value in self.__dict__.iteritems():
+         yield attr, value
 
 class Node:
    INDEX = 0
@@ -75,25 +81,41 @@ class Node:
    def __lt__(self, other):
       return self.bound < other.bound
 
-def greedy(capacity, size, items):
+def greedy(players, structure, capacity, numberReturned):
    weight = 0
    value = 0
-   indices = []
+   optimalLineups = []
+   optimalLineup = []
 
-   items.sort(reverse=True)
+   players.sort(reverse=True)
 
-   while (weight + items[0].weight < capacity):
-      temp = items.pop(0)
-      weight += temp.weight
-      value += temp.value
-      indices.append(temp.index)
+   while (structure['total'] > 0):
+      temp = players.pop(0)
 
-   indices.sort()
+      if weight + temp.weight < capacity:
+         weight += temp.weight
+         value += temp.value
+         optimalLineup.append(temp)
 
-   print 'greedy solution is: ' + str(value) + ' ' + str(weight)
+         #decrement players at position in lineup and total players
+         #and then remove if position is filled
+         structure[temp.position] = structure[temp.position] - 1
+         structure['total'] = structure['total'] - 1;
 
-   print ' '.join(str(indices))
+         if structure[temp.position] <= 0:
+            #removes players from that position
+            players = filter(lambda player: player.position != temp.position, players)
+            #players = [player for player in players if player.position = temp.position]
+            players.sort(reverse=True)
 
+   optimalLineup.sort()
+   optimalLineups.append(optimalLineup)
+
+   #print 'greedy solution is: ' + str(value) + ' ' + str(weight)
+   #for player in optimalLineup:
+   #   print player.name
+
+   return optimalLineups
 
 
 def branch(capacity, size, items, ratios):
@@ -129,24 +151,30 @@ def branch(capacity, size, items, ratios):
          print items[i]
 
 if __name__ == '__main__':
-   capacity = 0
-   size = 0
-   gItems = []
-   items = []
+   steve = Player(['steve smith', 'WR', '4.5', '600'])
+   print steve
+   for value in steve:
+      print value
+
+
+#   capacity = 0
+#   size = 0
+#   gPlayers = []
+#   players = []
    
-   if len(sys.argv) < 2:
-      print "not enought arguments"
-      sys.exit()
+#   if len(sys.argv) < 2:
+#      print "not enought arguments"
+#      sys.exit()
 
-   with open(sys.argv[1]) as inFile:
-      size = int(inFile.next())
+#   with open(sys.argv[1]) as inFile:
+#      size = int(inFile.next())
 
-      for i in range(1,size+1):
-         row = inFile.next()
-         gItems.append(Item([word for word in row.split()]))
-         items.append([word for word in row.split()])
+#      for i in range(1,size+1):
+#         row = inFile.next()
+#         gPlayers.append(Player([word for word in row.split()]))
+#         players.append([word for word in row.split()])
 
-      capacity = int(inFile.next())
+#      capacity = int(inFile.next())
 
-      Search.greedy(capacity, size, gItems)
-      #branch(capacity, size, items, gItems)
+#      Search.greedy(capacity, size, gPlayerss)
+      #branch(capacity, size, players, gPlayers)

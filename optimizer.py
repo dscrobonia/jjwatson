@@ -1,8 +1,9 @@
 import csv 
 import search
+from search import Player
 
-def search(players, structure, numLineups):
-   optimalLineups = search.greedy(players, structure, numLineups)
+def optimize(players, structure, salaryCap, numLineups):
+   optimalLineups = search.greedy(players, structure, salaryCap, numLineups)
 
    return optimalLineups
 
@@ -12,17 +13,24 @@ def read_players():
    with open('players.csv', 'rb') as playersFile:
       csvReader = csv.reader(playersFile)
       for row in csvReader:
-         players.append([player for player in row])
+         players.append(Player([info for info in row]))
 
    return players
 
 def get_lineups():
    #list of players (player, position, price, points)
-   lineupStructure = {'QB': 1, 'RB': 2, 'WR': 3, 'TE': 1, 'K': 1, 'DEF': 1}
+   lineupStructure = {'total': 9, 'QB': 1, 'RB': 2, 'WR': 3, 'TE': 1, 'K': 1, 'DEF': 1}
    players = read_players()
    numLineups = 10
 
-   optimalLineups = search(lineupStructure, players, numLineups)
+   optimalLineups = optimize(players, lineupStructure, 60000, numLineups)
+
+   with open('optimal.csv', 'wb') as outFile:
+      csvWriter = csv.writer(outFile)
+      for lineup in optimalLineups:
+         csvWriter.writerow(['new lineup'])
+         for player in lineup:
+            csvWriter.writerow([value[1] for value in player])
 
    return optimalLineups
 
