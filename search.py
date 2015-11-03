@@ -25,6 +25,53 @@ class Player:
          yield attr, value
 
 class Node:
+
+   def __init__(self, value, cost, curIndex, curLineup, remStructure, bound):
+      self.value = value
+      self.cost = cost
+      self.curIndex = curIndex
+      self.curLineup = curLineup
+      self.remStructure = remStructure
+      self.bound = bound
+      
+   def make_left(self, players):
+      left = self
+      
+#      #filter out completed positions
+#      for position in self.remStructure:
+#         if self.remStructure[position] == 0:
+#            availPlayers = filter(lambda player: player.position != position, players)
+
+#      #sort
+#      availPlayers.sort()
+      left.curIndex = left.curIndex + 1
+
+      while structure[players[left.curIndex].position] == 0:
+         left.curIndex = left.curIndex + 1
+
+      return left
+
+   def make_right(self, players, highestPlayers):
+      right = self
+
+      player = players[right.curIndex]
+
+      right.value = right.value + player.value
+      right.cost = right.value + player.cost
+      right.curLineup.append(player)
+      right.remStructure[player.position] = right.remStructure[player.position] - 1
+      right.bound = right.value
+
+      for position in right.remStructure:
+         right.bound = right.bound + right.remStructure[position] * highestPlayers[position].value
+
+      while right.remStructure[players[right.curIndex].position] == 0:
+         right.curIndex = right.curIndex + 1
+
+      return right
+
+
+class BadNode:
    INDEX = 0
    VALUE = 1
    WEIGHT = 2
@@ -117,8 +164,18 @@ def greedy(players, structure, capacity, numberReturned):
 
    return optimalLineups
 
+def branch(players, highestPlayers, lineupStructure, capacity):
+   q = Queue()
 
-def branch(capacity, size, items, ratios):
+   temp = Node()
+   best = temp
+
+   q.put(temp)
+
+   while not q.empty():
+      temp = q.pop()
+   
+def badbranch(capacity, size, items, ratios):
    q = PriorityQueue()
    temp = Node(0, 0, ratios[0].ratio * capacity, 0, '')
    maxV = temp
@@ -151,30 +208,24 @@ def branch(capacity, size, items, ratios):
          print items[i]
 
 if __name__ == '__main__':
-   steve = Player(['steve smith', 'WR', '4.5', '600'])
-   print steve
-   for value in steve:
-      print value
-
-
-#   capacity = 0
-#   size = 0
-#   gPlayers = []
-#   players = []
+   capacity = 0
+   size = 0
+   gPlayers = []
+   players = []
    
-#   if len(sys.argv) < 2:
-#      print "not enought arguments"
-#      sys.exit()
+   if len(sys.argv) < 2:
+      print "not enought arguments"
+      sys.exit()
 
-#   with open(sys.argv[1]) as inFile:
-#      size = int(inFile.next())
+   with open(sys.argv[1]) as inFile:
+      size = int(inFile.next())
 
-#      for i in range(1,size+1):
-#         row = inFile.next()
-#         gPlayers.append(Player([word for word in row.split()]))
-#         players.append([word for word in row.split()])
+      for i in range(1,size+1):
+         row = inFile.next()
+         gPlayers.append(Player([word for word in row.split()]))
+         players.append([word for word in row.split()])
 
-#      capacity = int(inFile.next())
+      capacity = int(inFile.next())
 
-#      Search.greedy(capacity, size, gPlayerss)
-      #branch(capacity, size, players, gPlayers)
+      #Search.greedy(capacity, size, gPlayerss)
+      branch(capacity, size, players, gPlayers)
