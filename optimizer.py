@@ -19,7 +19,7 @@ def read_players():
 
 def get_lineups():
    #list of players (player, position, price, points)
-   lineupStructure = {'total': 9, 'QB': 1, 'RB': 2, 'WR': 3, 'TE': 1, 'K': 1, 'DEF': 1}
+   lineupStructure = {'total': 9, 'QB': 1, 'RB': 2, 'WR': 3, 'TE': 1, 'K': 1, 'D': 1}
    players = read_players()
    numLineups = 10
 

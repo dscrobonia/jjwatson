@@ -8,14 +8,21 @@ class Player:
       self.position = position
       self.value = value
       self.weight = weight
-      self.ratio = value/weight
+      if weight != 0:
+          self.ratio = value/weight
+      else:
+          self.ratio = 0
 
    def __init__(self, args):
       self.name = str(args[0])
       self.position = str(args[1])
       self.value = float(args[2])
       self.weight = int(args[3])
-      self.ratio = self.value/float(self.weight)
+      if self.weight != 0:
+          self.ratio = self.value/self.weight
+      else:
+          self.ratio = 0
+
 
    def __lt__(self, other):
       return self.ratio < other.ratio
