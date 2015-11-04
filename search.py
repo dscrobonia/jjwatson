@@ -53,7 +53,7 @@ class Node:
 #      availPlayers.sort()
       left.curIndex = left.curIndex + 1
 
-      while left.remStructure[players[left.curIndex].position] == 0:
+      while left.curIndex < len(players) and left.remStructure[players[left.curIndex].position] == 0:
          left.curIndex = left.curIndex + 1
 
       return left
@@ -182,6 +182,13 @@ def greedy(players, structure, capacity, numberReturned):
 def branch(players, lineupStructure, capacity, numLineups):
    stack = []
 
+   greedyResults = greedy(players, lineupStructure.copy(), capacity, 1)[0]
+
+   greedyValue = 0
+   
+   for player in greedyResults:
+      greedyValue = greedyValue + player.value
+
    highestPlayers = {'QB': Player(['', 'QB', 0, 0]),
                      'RB': Player(['', 'RB', 0, 0]),
                      'WR': Player(['', 'WR', 0, 0]),
@@ -199,8 +206,9 @@ def branch(players, lineupStructure, capacity, numLineups):
    bound = 0
 
    for position in lineupStructure:
+   #   print position, lineupStructure[position]
       bound = bound + (lineupStructure[position] * highestPlayers[position].value)
-  # print "maxBound:", bound
+   #print "maxBound:", bound
 
    temp = Node(0, 0, 0, [], lineupStructure, bound)
    best = temp
@@ -209,22 +217,26 @@ def branch(players, lineupStructure, capacity, numLineups):
 
    while stack:
       temp = stack.pop()
-   #   print best.value
+      #print best.value, best.cost
+      #for player in best.curLineup:
+      #   print player.name
+      # print best.curIndex
+
       
       if temp.bound > best.value and not temp.is_lineup_filled():
          left = temp.make_left(players)
 
-         if left.bound > best.value:
+         if left.bound > greedyValue:
             #print "appending left"
             stack.append(left)
 
-         if temp.cost + players[temp.curIndex].weight <= capacity:
+         if temp.curIndex < len(players) and temp.cost + players[temp.curIndex].weight <= capacity:
             right = temp.make_right(players, highestPlayers)
 
-            if right.value > best.value:
+            if right.value > best.value and right.is_lineup_filled():
                best = right
 
-            if right.bound > best.value:
+            if right.bound > greedyValue:
                #print "appending right"
                stack.append(right)
 
