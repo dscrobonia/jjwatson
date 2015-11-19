@@ -2,6 +2,24 @@ import csv
 import search
 from search import Player
 
+#returns list of [player, points] list pairs
+#projections are a dictionary of 'stat', 'value' pairs
+#where 'stat' is also the key of the scoringSystem
+#dictionary which has 'stat', 'points/per' pairs
+#i.e. projections = {'throwing tds': 2.6, ... }
+# and scoringSystem = {'throwing tds': 4, ... }
+def calculate_points(players, projections, scoringSystem):
+   points = []
+   for player in players:
+      points = 0
+
+      for stat in projections:
+         points = points + projections[stat] * scoringSytem[stat]
+
+      points.append([player, points])
+
+   return points
+
 def optimize(players, structure, salaryCap, numLineups):
    #optimalLineups = search.greedy(players, structure, salaryCap, numLineups)
    optimalLineups = search.branch(players, structure, salaryCap, numLineups)
