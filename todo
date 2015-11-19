@@ -1,0 +1,11 @@
+-calculate points of a player from db
+-calculate points of a lineup of players
+-get projected points
+-get consistency rankings/floor rankings
+
+
+features:
+-inclusion or exclusion of players
+-thursday night games or later
+-choose projected, floor, cieling
+-get top X choices
