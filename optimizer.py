@@ -14,11 +14,17 @@ def calculate_points(players, projections, scoringSystem):
       points = 0
 
       for stat in projections:
-         points = points + projections[stat] * scoringSytem[stat]
+         points = points + projections[stat] * scoringSystem[stat]
 
       points.append([player, points])
 
    return points
+
+def set_projected_points(playersFileName, projectedFileName):
+   with open(playersFileName, 'rb') as playersFile:
+      with open(projected
+   
+
 
 def optimize(players, structure, salaryCap, numLineups):
    #optimalLineups = search.greedy(players, structure, salaryCap, numLineups)
@@ -54,6 +60,10 @@ def get_lineups():
    return optimalLineups
 
 if __name__ == '__main__':
+   #todo: add arguments
+
+   set_projected_points('players.csv', 'projected.csv')
+
    lineups = get_lineups()
 
    for lineup in lineups:
